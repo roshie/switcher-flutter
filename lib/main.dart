@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -17,7 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // Prepare for socket connection
-  IO.Socket socket = IO.io('http://localhost:3000', <String, dynamic>{
+  IO.Socket socket =
+      IO.io('https://4f08-27-5-237-194.ngrok.io', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -39,8 +41,14 @@ class _HomeState extends State<Home> {
       socket.emit('recognize', {'type': 'client'});
     });
 
+    socket.onConnectError((data) {
+      print("Error while connecting to Node server");
+      print(data);
+    });
+
     // Listen to server
     socket.on('devices', (data) {
+      print(data);
       setState(() {
         if (data.isEmpty) {
           availableDevices['devices'] = 'NA';
