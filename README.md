@@ -1,4 +1,4 @@
-# demoapp
+# switcher
 
 A new Flutter project.
 
