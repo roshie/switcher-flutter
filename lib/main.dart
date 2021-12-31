@@ -8,7 +8,7 @@ import 'room.dart';
 
 void main() {
   // Run App
-  runApp(MaterialApp(home: Home()));
+  runApp(MaterialApp(home: Room(deviceId: 'OOuZ938xXsgZ_XYjAAAZ')));
 }
 
 class Home extends StatefulWidget {
@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
     'autoConnect': false,
   });
 
-  var availableDevices = {'devices': 'loading'};
+  var availableDevices = <String, dynamic>{'devices': 'loading'};
 
   @override
   void initState() {
