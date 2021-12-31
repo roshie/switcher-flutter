@@ -4,28 +4,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'config.dart';
-import 'room.dart';
 
-void main() {
-  // Run App
-  runApp(MaterialApp(home: Home()));
-}
-
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class Room extends StatefulWidget {
+  final String deviceId;
+  const Room({Key? key, required this.deviceId}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Room> createState() => _RoomState();
 }
 
-class _HomeState extends State<Home> {
+class _RoomState extends State<Room> {
   // Prepare for socket connection
   IO.Socket socket = IO.io(backendURL, <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
 
-  var availableDevices = {'devices': 'loading'};
+  var switches = {'switches': 'loading'};
 
   @override
   void initState() {
@@ -50,10 +45,10 @@ class _HomeState extends State<Home> {
     socket.on('devices', (data) {
       print(data);
       setState(() {
-        if (data.isEmpty) {
-          availableDevices['devices'] = 'NA';
+        if (data.isEmpty || !data.containsKey(widget.deviceId)) {
+          switches['switches'] = 'NA';
         } else {
-          availableDevices['devices'] = data;
+          switches['switches'] = data[widget.deviceId]['switches'];
         }
       });
     });
