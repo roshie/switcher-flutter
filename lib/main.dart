@@ -8,7 +8,7 @@ import 'room.dart';
 
 void main() {
   // Run App
-  runApp(MaterialApp(home: Room(deviceId: 'OOuZ938xXsgZ_XYjAAAZ')));
+  runApp(MaterialApp(home: Home()));
 }
 
 class Home extends StatefulWidget {

@@ -81,6 +81,41 @@ class _RoomState extends State<Room> {
         style: TextStyle(color: Colors.white, fontSize: 18),
       ));
     } else if (roomName != "loading" && !switches['switches'].isEmpty) {
+      List<Widget> switchWidget = [];
+
+      switches['switches'].forEach((name, value) {
+        Widget switchRow = Padding(
+          padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+          child: Container(
+            height: 100,
+            decoration: const BoxDecoration(color: Colors.black12),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    name.split("_").join(" "),
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  Transform.scale(
+                    scale: 1.5,
+                    child: Switch(
+                        value: value == 1 ? true : false,
+                        inactiveTrackColor: Colors.grey.shade400,
+                        onChanged: (bool val) {
+                          _toggleSwitch(name, val);
+                        }),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+
+        switchWidget.add(switchRow);
+      });
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -100,10 +135,10 @@ class _RoomState extends State<Room> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight)),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.only(left: 8.0, bottom: 15.0),
                   child: TextButton(
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(
@@ -118,11 +153,12 @@ class _RoomState extends State<Room> {
                     ),
                   ),
                 ),
-                Center(
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 28.0),
                   child: Text(
                     roomName.split('_').join(" "),
                     style: const TextStyle(
-                        fontSize: 26,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Colors.white),
                   ),
@@ -130,7 +166,10 @@ class _RoomState extends State<Room> {
               ],
             ),
           ),
-          Text("Children here")
+          const Padding(padding: EdgeInsets.only(top: 35.0, bottom: 35.0)),
+          Column(
+            children: switchWidget,
+          )
         ],
       );
     }
@@ -152,6 +191,17 @@ class _RoomState extends State<Room> {
             ),
           )
         ]);
+  }
+
+  void _toggleSwitch(name, val) {
+    setState(() {
+      switches['switches'][name] = val ? 1 : 0;
+    });
+    socket.emit('switch', {
+      'switchName': name,
+      'toggleState': val ? 1 : 0,
+      'deviceId': widget.deviceId
+    });
   }
 
   void _goBack() {
