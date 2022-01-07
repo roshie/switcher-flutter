@@ -74,35 +74,56 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
-
     // -----------put your code here Joekin--------------
-    
-    return  Scaffold(      
-       
-      appBar: AppBar(
-      title: const Text("Welcome"),
-      ),
+
+    return Scaffold(
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("images/blurBG.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset("Assets/images/template.jpg")
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  padding: const EdgeInsets.all(10.0),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    color: Colors.white,
+                    elevation: 10,
+                    
+
+                    child: Switch(
+                      value: isSwitched,
+                      onChanged: (value) {
+                        setState(() {
+                          isSwitched = value;
+                          print(isSwitched);
+                        });
+                      },
+                      activeTrackColor: Colors.lightGreenAccent,
+                      activeColor: Colors.green,
+                    ),
+                  ),
+                )
+              ],
+            )
           ],
         ),
-
       ),
-      
-      
-      
-      
     );
-        
-        
-
-        
-      
-    
   }
 }
+
+class CustomSwitch {}
