@@ -8,7 +8,11 @@ import 'room.dart';
 
 void main() {
   // Run App
-  runApp(MaterialApp(home: Home()));
+  runApp(MaterialApp(
+    home: Home(),
+    theme: ThemeData(fontFamily: 'Poppins'),
+    debugShowCheckedModeBanner: false,
+  ));
 }
 
 class Home extends StatefulWidget {
