@@ -40,6 +40,9 @@ class _RoomState extends State<Room> {
 
     socket.onConnectError((data) {
       print("Error while connecting to Node server");
+      setState(() {
+        roomName = "NoNetworkAccess";
+      });
       print(data);
     });
 
@@ -57,7 +60,12 @@ class _RoomState extends State<Room> {
     });
 
     // While disconnecting...
-    socket.onDisconnect((_) => print('disconnected from server'));
+    socket.onDisconnect((_) {
+      print('disconnected from server');
+      setState(() {
+        roomName = "NoNetworkAccess";
+      });
+    });
   }
 
   @override
@@ -69,18 +77,103 @@ class _RoomState extends State<Room> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade900,
-        body: loadThePage(roomName, switches));
+      // backgroundColor: Colors.grey.shade900,
+      body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/blurBG.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 30.0, left: 10.0),
+                child: TextButton(
+                  onPressed: _goBack,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.grey.shade900,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20, top: 15.0, bottom: 15.0, right: 12.0),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 18,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(child: loadThePage(roomName, switches)),
+            ],
+          )),
+    );
   }
 
   Widget loadThePage(String roomName, Map<String, dynamic> switches) {
+    // If the room is offline
     if (roomName == 'NA') {
-      return const Center(
-          child: Text(
-        "The Device is in offline.",
-        style: TextStyle(color: Colors.white, fontSize: 18),
-      ));
-    } else if (roomName != "loading" && !switches['switches'].isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Icon(
+                Icons.error_outline,
+                color: Colors.grey.shade700,
+                size: 60,
+              ),
+            ),
+            const Expanded(
+              child: Center(
+                child: Text(
+                  "Uh Oh! Seems Like the controller for the room is Offline.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // If no network access
+    else if (roomName == 'NoNetworkAccess') {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Icon(
+                Icons.wifi_off_outlined,
+                color: Colors.grey.shade700,
+                size: 60,
+              ),
+            ),
+            const Expanded(
+              child: Center(
+                child: Text(
+                  "The device is Offine. Please go back online. ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // If online
+    else if (roomName != "loading" &&
+        roomName != "NoNetworkAccess" &&
+        !switches['switches'].isEmpty) {
       List<Widget> switchWidget = [];
 
       switches['switches'].forEach((name, value) {
@@ -116,61 +209,13 @@ class _RoomState extends State<Room> {
         switchWidget.add(switchRow);
       });
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: 100,
-            decoration: const BoxDecoration(
-                shape: BoxShape.rectangle,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black, spreadRadius: 5, blurRadius: 15)
-                ],
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40)),
-                gradient: LinearGradient(
-                    colors: [Colors.blue, Colors.purple],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 15.0),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          decorationColor: Colors.white),
-                    ),
-                    onPressed: _goBack,
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 28.0),
-                  child: Text(
-                    roomName.split('_').join(" "),
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 35.0, bottom: 35.0)),
-          Column(
-            children: switchWidget,
-          )
-        ],
+      // If loading
+      return Padding(
+        padding: const EdgeInsets.only(top: 35.0, bottom: 35.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: switchWidget,
+        ),
       );
     }
 
