@@ -27,6 +27,8 @@ class _HomeState extends State<Home> {
 
   var availableDevices = <String, dynamic>{'devices': 'loading'};
 
+  get scaffoldKey => null;
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +72,33 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
     // -----------put your code here Joekin--------------
-    return const Scaffold(body: Text("Helloo"));
+    
+    return  Scaffold(      
+       
+      appBar: AppBar(
+      title: const Text("Welcome"),
+      ),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset("Assets/images/template.jpg")
+          ],
+        ),
+
+      ),
+      
+      
+      
+      
+    );
+        
+        
+
+        
+      
+    
   }
 }
