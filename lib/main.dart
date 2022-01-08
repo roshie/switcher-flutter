@@ -10,7 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 void main() {
   // Run App
   runApp(MaterialApp(
-    // home: Room(deviceId: "qcGZjp0zrLRX1BUUAAAv"),
+    // home: Room(deviceId: "5a8vCih28D8ve0LkAAAB"),
     home: Home(),
     theme: ThemeData(fontFamily: 'Poppins'),
     debugShowCheckedModeBanner: false,
@@ -89,8 +89,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // -----------put your code here Joekin--------------
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -156,61 +154,74 @@ class _HomeState extends State<Home> {
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(8.0),
-                    padding: EdgeInsets.all(15.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                        gradient: LinearGradient(
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                            colors: gradientList),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: FaIcon(
-                            FontAwesomeIcons.couch,
-                            size: 30,
-                            color: Colors.white,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Room(
+                            deviceId: "GPPWvmlCwt4jRe03AAAp",
                           ),
                         ),
-                        Text(
-                          "Living Room",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        Text(
-                          "4 devices",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Transform.scale(
-                            scale: 1.5,
-                            child: Switch(
-                              value: switch1,
-                              onChanged: (value) {
-                                setState(() {
-                                  switch1 = value;
-                                  gradientList =
-                                      value ? activeTile : inactiveTile;
-                                });
-                              },
-                              activeTrackColor: Color(0xffE90846),
-                              inactiveTrackColor: Colors.grey,
-                              activeColor: Colors.white,
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(15.0),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.2)),
+                          gradient: LinearGradient(
+                              begin: Alignment.bottomLeft,
+                              end: Alignment.topRight,
+                              colors: gradientList),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: FaIcon(
+                              FontAwesomeIcons.couch,
+                              size: 30,
+                              color: Colors.white,
                             ),
                           ),
-                        ),
-                      ],
+                          Text(
+                            "Living Room",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          Text(
+                            "4 devices",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Transform.scale(
+                              scale: 1.5,
+                              child: Switch(
+                                value: switch1,
+                                onChanged: (value) {
+                                  setState(() {
+                                    switch1 = value;
+                                    gradientList =
+                                        value ? activeTile : inactiveTile;
+                                  });
+                                },
+                                activeTrackColor: Color(0xffE90846),
+                                inactiveTrackColor: Colors.grey,
+                                activeColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -222,5 +233,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-class CustomSwitch {}
