@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 void main() {
   // Run App
   runApp(MaterialApp(
+    // home: Room(deviceId: "qcGZjp0zrLRX1BUUAAAv"),
     home: Home(),
     theme: ThemeData(fontFamily: 'Poppins'),
     debugShowCheckedModeBanner: false,
@@ -101,7 +102,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               children: [
@@ -130,19 +131,27 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     'Welcome Home',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,
                         fontWeight: FontWeight.bold),
                   ),
-                )
-              ],
+                  Text(
+                    'Control Your Appliances',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Row(
               children: [
@@ -151,7 +160,7 @@ class _HomeState extends State<Home> {
                     margin: EdgeInsets.all(8.0),
                     padding: EdgeInsets.all(15.0),
                     decoration: BoxDecoration(
-                        border: Border.all(color:Colors.grey.withOpacity(0.)),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
                         gradient: LinearGradient(
                             begin: Alignment.bottomLeft,
                             end: Alignment.topRight,
