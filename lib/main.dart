@@ -96,69 +96,78 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("images/blurBG.jpg"),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.4), BlendMode.softLight),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0, left: 10.0),
-                  child: TextButton(
-                    onPressed: null,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.grey.shade900,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.home,
-                          size: 30,
-                          color: Colors.grey.shade600,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/blurBG.jpg"),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.4), BlendMode.softLight),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0, left: 10.0),
+                      child: TextButton(
+                        onPressed: null,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.grey.shade900,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.home,
+                              size: 30,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                    Container(
+                      height: 100,
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Home',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Control Your Appliances',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Container(
-                  height: 100,
-                )
+                ...loadThePage(),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome Home',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Control Your Appliances',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ...loadThePage(),
-          ],
+          ),
         ),
       ),
     );
@@ -266,53 +275,47 @@ class _HomeState extends State<Home> {
       return col;
     }
     return [
-      Expanded(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 28.0),
-                child: Transform.scale(
-                  scale: 2,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2.0,
-                  ),
+      Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 80.0),
+              child: Transform.scale(
+                scale: 2,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.0,
                 ),
               ),
-              Center(
-                child: Text(
-                  "Loading...",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              )
-            ]),
-      )
+            ),
+            Center(
+              child: Text(
+                "Loading...",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            )
+          ])
     ];
   }
 
   void setAllDevices(String name, bool value) {
-    availableDevices.forEach((key, data) {
-      if (key == name) {
-        data["switches"].forEach((switchName, switchVal) {
-          socket.emit("switch", {
-            'deviceId': name,
-            "switchName": switchName,
-            "toggleState": value ? 1 : 0
-          });
-          setState(() {
-            switchVal = value ? 1 : 0;
-          });
-        });
-      }
+    var result = {};
+    availableDevices[name]["switches"].forEach((switchName, switchVal) {
+      result[switchName] = value ? 1 : 0;
     });
+    setState(() {
+      availableDevices[name]["switches"] = result;
+    });
+
+    socket.emit("switch", {'deviceId': name, "switches": result});
   }
 
   List<Widget> DisplayInfoWidget(String message, String type) {
     return [
-      Expanded(
-        child: Center(
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 80),
           child: Icon(
             type == "NoNetworkAccess"
                 ? Icons.wifi_off_outlined
@@ -322,13 +325,11 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      Expanded(
-        child: Center(
-          child: Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 22),
-          ),
+      Center(
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 22),
         ),
       ),
     ];

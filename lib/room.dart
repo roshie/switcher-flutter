@@ -94,12 +94,8 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
     _tabController.dispose();
   }
 
-  void switchOnOff(name, value) {
-    socket.emit("switch", {
-      'deviceId': widget.deviceId,
-      "switchName": name,
-      "toggleState": value
-    });
+  void switchOnOff(switches) {
+    socket.emit("switch", {'deviceId': widget.deviceId, "switches": switches});
   }
 
   @override
@@ -199,7 +195,7 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
                       switches["switches"][name] == 1 ? 0 : 1;
                 });
                 try {
-                  switchOnOff(name, switches["switches"][name]);
+                  switchOnOff(switches["switches"]);
                 } catch (a) {
                   // print(a);
                 }
