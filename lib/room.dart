@@ -149,12 +149,14 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
     // If the room is offline
     if (roomName == 'NA') {
       return DisplayInfoWidget(
-          "Uh Oh! Seems Like the controller for the room is Offline.");
+          "Uh Oh! Seems Like the controller for the room is Offline.",
+          roomName);
     }
 
     // If no network access
     else if (roomName == 'NoNetworkAccess') {
-      return DisplayInfoWidget("The device is Offine. Please go back online. ");
+      return DisplayInfoWidget(
+          "The device is Offine. Please go back online. ", roomName);
     }
 
     // If online
@@ -301,7 +303,7 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const [
           Padding(
-            padding: EdgeInsets.all(18.0),
+            padding: EdgeInsets.symmetric(vertical: 35.0),
             child: CircularProgressIndicator(
               color: Colors.white,
             ),
@@ -319,14 +321,16 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
     Navigator.pop(context);
   }
 
-  Widget DisplayInfoWidget(String message) {
+  Widget DisplayInfoWidget(String message, String type) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 40.0),
       child: Column(
         children: [
           Expanded(
             child: Icon(
-              Icons.error_outline,
+              type == "NoNetworkAccess"
+                  ? Icons.wifi_off_outlined
+                  : Icons.error_outline,
               color: Colors.grey.shade700,
               size: 60,
             ),

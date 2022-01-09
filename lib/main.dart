@@ -31,10 +31,9 @@ class _HomeState extends State<Home> {
     'autoConnect': false,
   });
 
-  var availableDevices = <String, dynamic>{'devices': 'loading'};
+  Map<String, dynamic> availableDevices = <String, dynamic>{};
+  String actState = "loading";
 
-  bool switch1 = false;
-  bool switch2 = false;
   List<Color> activeTile = [
     Color(0xffE37B33),
     Color(0xffE90846),
@@ -43,12 +42,10 @@ class _HomeState extends State<Home> {
     Color(0xff808080).withOpacity(0.15),
     Color(0xff808080).withOpacity(0.15),
   ];
-  late List<Color> gradientList;
 
   @override
   void initState() {
     super.initState();
-    gradientList = switch1 ? activeTile : inactiveTile;
     initSocket();
   }
 
@@ -62,6 +59,9 @@ class _HomeState extends State<Home> {
 
     socket.onConnectError((data) {
       print("Error while connecting to Node server");
+      setState(() {
+        actState = "NoNetworkAccess";
+      });
       print(data);
     });
 
@@ -70,15 +70,21 @@ class _HomeState extends State<Home> {
       print(data);
       setState(() {
         if (data.isEmpty) {
-          availableDevices['devices'] = 'NA';
+          actState = 'NA';
         } else {
-          availableDevices['devices'] = data;
+          availableDevices = data;
+          actState = "available";
         }
       });
     });
 
     // While disconnecting...
-    socket.onDisconnect((_) => print('disconnected from server'));
+    socket.onDisconnect((_) {
+      print('disconnected from server');
+      setState(() {
+        actState = "NoNetworkAccess";
+      });
+    });
   }
 
   @override
@@ -151,85 +157,226 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Room(
-                            deviceId: "GPPWvmlCwt4jRe03AAAp",
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(8.0),
-                      padding: EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Colors.grey.withOpacity(0.2)),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.topRight,
-                              colors: gradientList),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: FaIcon(
-                              FontAwesomeIcons.couch,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "Living Room",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          Text(
-                            "4 devices",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Transform.scale(
-                              scale: 1.5,
-                              child: Switch(
-                                value: switch1,
-                                onChanged: (value) {
-                                  setState(() {
-                                    switch1 = value;
-                                    gradientList =
-                                        value ? activeTile : inactiveTile;
-                                  });
-                                },
-                                activeTrackColor: Color(0xffE90846),
-                                inactiveTrackColor: Colors.grey,
-                                activeColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
+            ...loadThePage(),
           ],
         ),
       ),
+    );
+  }
+
+  List<Widget> loadThePage() {
+    if (actState == "NA") {
+      return DisplayInfoWidget("You Have No Rooms Online. ", actState);
+    } else if (actState == "NoNetworkAccess") {
+      return DisplayInfoWidget(
+          "The device is Offine. Please go back online. ", actState);
+    } else if (actState == "available") {
+      List<Widget> col = [];
+
+      List<Widget> row = [];
+
+      availableDevices.forEach((name, data) {
+        if (row.length == 2) {
+          col.add(Row(
+            children: row,
+          ));
+          row = [];
+        }
+
+        int noOfSwitches = 0;
+        int turnedOn = 0;
+
+        data["switches"].forEach((switchName, val) {
+          noOfSwitches++;
+          if (val == 1) turnedOn++;
+        });
+
+        row.add(
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Room(
+                      deviceId: name,
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: turnedOn > 0 ? activeTile : inactiveTile),
+                    borderRadius: BorderRadius.circular(20)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: getRelevantIcon(data["name"])),
+                    Text(
+                      data["name"].split("_").join(" "),
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    Text(
+                      "$noOfSwitches devices" +
+                          (turnedOn > 0 ? ", $turnedOn turned On" : ""),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Transform.scale(
+                        scale: 1.5,
+                        child: Switch(
+                          value: turnedOn > 0 ? true : false,
+                          onChanged: (value) {
+                            setAllDevices(name, value);
+                            setState(() {
+                              turnedOn = value ? noOfSwitches : 0;
+                            });
+                          },
+                          activeTrackColor: Color(0xffE90846),
+                          inactiveTrackColor: Colors.grey,
+                          activeColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      });
+      col.add(Row(
+        children: row,
+      ));
+      return col;
+    }
+    return [
+      Expanded(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 28.0),
+                child: Transform.scale(
+                  scale: 2,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.0,
+                  ),
+                ),
+              ),
+              Center(
+                child: Text(
+                  "Loading...",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              )
+            ]),
+      )
+    ];
+  }
+
+  void setAllDevices(String name, bool value) {
+    availableDevices.forEach((key, data) {
+      if (key == name) {
+        data["switches"].forEach((switchName, switchVal) {
+          socket.emit("switch", {
+            'deviceId': name,
+            "switchName": switchName,
+            "toggleState": value ? 1 : 0
+          });
+          setState(() {
+            switchVal = value ? 1 : 0;
+          });
+        });
+      }
+    });
+  }
+
+  List<Widget> DisplayInfoWidget(String message, String type) {
+    return [
+      Expanded(
+        child: Center(
+          child: Icon(
+            type == "NoNetworkAccess"
+                ? Icons.wifi_off_outlined
+                : Icons.error_outline,
+            color: Colors.grey.shade700,
+            size: 60,
+          ),
+        ),
+      ),
+      Expanded(
+        child: Center(
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 22),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  Widget getRelevantIcon(String type) {
+    if (type == "Living_Room") {
+      return FaIcon(
+        FontAwesomeIcons.couch,
+        size: 30,
+        color: Colors.white,
+      );
+    } else if (type == "Kitchen") {
+      return FaIcon(
+        Icons.kitchen,
+        size: 30,
+        color: Colors.white,
+      );
+    } else if (type == "Bathroom") {
+      return Icon(
+        FontAwesomeIcons.bath,
+        size: 30,
+        color: Colors.white,
+      );
+    } else if (type == "Bedroom") {
+      return FaIcon(
+        FontAwesomeIcons.bed,
+        size: 30,
+        color: Colors.white,
+      );
+    } else if (type == "Dining_Room") {
+      return FaIcon(
+        FontAwesomeIcons.utensils,
+        size: 30,
+        color: Colors.white,
+      );
+    } else if (type == "Parking") {
+      return FaIcon(
+        FontAwesomeIcons.utensilSpoon,
+        size: 30,
+        color: Colors.white,
+      );
+    }
+
+    return FaIcon(
+      FontAwesomeIcons.star,
+      size: 30,
+      color: Colors.white,
     );
   }
 }
