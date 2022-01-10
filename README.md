@@ -1,6 +1,7 @@
 # Project-Switcher ⚡
 
 A Mobile Application built using Flutter SDK, NodeJS and Micropython to implement Smart Home Automation.
+🌟 Control your Appliances from Outside your home. 
 
 ## Snaps ✨
 
