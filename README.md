@@ -1,16 +1,13 @@
-# switcher
+# Project-Switcher ⚡
 
-A new Flutter project.
+A Mobile Application built using Flutter SDK, NodeJS and Micropython to implement Smart Home Automation.
+<br>Control your Appliances from Outside your home. 🌟
 
-## Getting Started
+## Snaps ✨
 
-This project is a starting point for a Flutter application.
+![Switcher](https://user-images.githubusercontent.com/67852344/148769229-86520ccd-125a-4ace-8aff-076d240d36d2.jpg)
 
-A few resources to get you started if this is your first Flutter project:
+🔥 Syncs up between Multiple Clients
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+![SyncUpImage](https://user-images.githubusercontent.com/67852344/148773327-afcf6f0b-a1b5-433e-a76f-27ff57989ab3.gif)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
