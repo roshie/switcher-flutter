@@ -1,1 +1,2 @@
-String backendURL = "https://switcher-node-server.herokuapp.com/";
+String backendURL = "https://switcher-flask-server.herokuapp.com/";
+

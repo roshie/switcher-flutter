@@ -50,15 +50,15 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> initSocket() async {
-    // Connect to node server
+    // Connect to Flask server
     socket.connect();
     socket.onConnect((_) {
-      print('Connected to Node server');
+      print('Connected to Flask server');
       socket.emit('recognize', {'type': 'client'});
     });
 
     socket.onConnectError((data) {
-      print("Error while connecting to Node server");
+      print("Error while connecting to Flask server");
       setState(() {
         actState = "NoNetworkAccess";
       });
