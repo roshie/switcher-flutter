@@ -6,7 +6,7 @@ A Mobile Application to implement Smart Home Automation.
 ## Tech Stack used
 - Flutter SDK
 - Flask - Python
-- SocketIO (Flutter client library and NodeJS server library was used for real-time communication and device status)
+- SocketIO (Flutter client library and Flask-SocketIO server library were used for real-time communication and device status)
 - Micropython (Written on ESP8266 WiFi Board with SocketIO client library)
 
 ## Snaps ✨
