@@ -1,7 +1,7 @@
 # Project-Switcher ⚡
 
-A Mobile Application to implement Smart Home Automation.
-<br>Control your Appliances from Outside your home. 🌟
+A Mobile Application to control Home Appliances.
+<br>Control your Devices from Outside your home. 🌟
 
 ## Tech Stack used
 - Flutter SDK
